@@ -14,6 +14,12 @@ const categorySchema = new mongoose.Schema(
     parentId: {
       type: String,
     },
+    subCategory: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "subCategory"
+      }
+    ],
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

@@ -37,6 +37,7 @@ exports.signup = (req, res) => {
         const token = generateJwtToken(user._id, user.role);
         const { _id, firstName, lastName, email, role, fullName } = user;
         return res.status(201).json({
+          success: true,
           token,
           user: { _id, firstName, lastName, email, role, fullName },
         });
@@ -69,3 +70,17 @@ exports.signin = (req, res) => {
     }
   });
 };
+
+exports.getUser = async (req, res) => {
+  try {
+    const allUsers = await User.find({ role: "user" })
+    if (allUsers) {
+      res.status(200).json({
+        success: true,
+        payload: allUsers
+      })
+    }
+  } catch (error) {
+    return res.status(400).json({ message: "алдаа гарлаа" });
+  }
+}

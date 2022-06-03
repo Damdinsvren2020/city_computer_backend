@@ -32,10 +32,17 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
+    wishList: [
+      {
+        type: mongoose.Types.ObjectId,
+        required: false
+      }
+    ],
     hash_password: {
       type: String,
       required: true,
     },
+    status: { type: String, enum: ['active', 'delete'], default: 'active' },
     role: {
       type: String,
       enum: ["user", "admin", "super-admin"],
