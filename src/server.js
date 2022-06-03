@@ -1,24 +1,32 @@
 const express = require("express");
 const env = require("dotenv");
 const app = express();
-const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
 const authRoutes = require("./routes/auth");
+const adminRoutes = require("./routes/admin/auth");
+const categoryRoutes = require("./routes/category");
+const productRoutes = require("./routes/product");
 
 env.config();
 
 mongoose
-  .connect("mongodb://localhost:27017/test", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(
+    "mongodb+srv://admin:admin123@cluster0.i4tip.mongodb.net/citycomputer",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
   .then(() => {
     console.log("Database connectod");
   });
 
-app.use(bodyParser());
+app.use(express.json());
 app.use("/api", authRoutes);
+app.use("/api", adminRoutes);
+app.use("/api", categoryRoutes);
+app.use("/api", productRoutes);
 
 app.get("/data", (req, res, next) => {
   res.status(200).json({
@@ -27,5 +35,5 @@ app.get("/data", (req, res, next) => {
 });
 
 app.listen(process.env.PORT, () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
+  console.log(`Server is running on port http://localhost:${process.env.PORT}`);
 });

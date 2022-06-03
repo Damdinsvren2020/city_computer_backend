@@ -1,4 +1,4 @@
-const User = require("../models/user");
+const User = require("../../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const shortid = require("shortid");
@@ -23,13 +23,14 @@ exports.signup = (req, res) => {
       lastName,
       email,
       hash_password,
-      username: shortid.generate(),
+      username: Math.random().toString(),
+      role: "admin",
     });
 
     _user.save((error, user) => {
       if (error) {
         return res.status(400).json({
-          message: "Хэрэглэгч нэвтрэхэд алдаа гарлаа ",
+          message: "Something went wrong",
         });
       }
 
@@ -46,26 +47,40 @@ exports.signup = (req, res) => {
 };
 
 exports.signin = (req, res) => {
-  User.findOne({ email: req.body.email }).exec(async (error, user) => {
+  User.findOne({ email: req.body.email }).exec((error, user) => {
     if (error) return res.status(400).json({ error });
     if (user) {
       if (user.authenticate(req.body.password) && user.role === "admin") {
-        const token = jwt.sign(
-          { _id: user._id, role: user.role },
-          process.env.JWT_SECRET
-        );
+        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+          expiresIn: "1h",
+        });
         const { _id, firstName, lastName, email, role, fullName } = user;
         res.status(200).json({
           token,
-          user: { _id, firstName, lastName, email, role, fullName },
+          user: {
+            _id,
+            firstName,
+            lastName,
+            email,
+            role,
+            fullName,
+          },
         });
       } else {
         return res.status(400).json({
-          message: "Нууц үг буруу байна",
+          message: "Invalid password",
         });
       }
     } else {
-      return res.status(400).json({ message: "Нэвтрэхэд алдаа гарлаа" });
+      return res.status(400).json({ message: "Something with wrong" });
     }
   });
+};
+
+exports.requiredSignin = (req, res, next) => {
+  const token = req.headers.authorization.split("")[1];
+  const user = jwt.verify(token, process.env.JWT_SECRET);
+  req.user = user;
+  console.log(token);
+  next();
 };
