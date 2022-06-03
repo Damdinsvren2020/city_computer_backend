@@ -48,20 +48,22 @@ exports.signup = (req, res) => {
 
 exports.signin = async (req, res) => {
   try {
-    const { email, password } = req.body
-    const userExist = await User.findOne({ email: email })
-    if (!userExist) return res.status(400).json({
-      message: "Email not found",
-    })
+    const { email, password } = req.body;
+    const userExist = await User.findOne({ email: email });
+    if (!userExist)
+      return res.status(400).json({
+        message: "Email not found",
+      });
     if (userExist) {
-      if (userExist.role !== "admin") return res.status(400).json({
-        message: "Access Denied",
-      })
-      const matched = await bcrypt.compare(userExist.hash_password, password);
-      // console.log(matched)
-      // if (!matched) return res.status(400).json({
-      //   message: "Invalid password",
-      // })
+      if (userExist.role !== "admin")
+        return res.status(400).json({
+          message: "Access Denied",
+        });
+      const matched = await bcrypt.compare(password, userExist.hash_password);
+      if (!matched)
+        return res.status(400).json({
+          message: "Invalid password",
+        });
       const token = jwt.sign({ _id: userExist._id }, process.env.JWT_SECRET, {
         expiresIn: "1h",
       });
@@ -73,14 +75,14 @@ exports.signin = async (req, res) => {
           lastName: userExist.lastName,
           email: userExist.email,
           role: userExist.role,
-          fullName: userExist.fullName
+          fullName: userExist.fullName,
         },
       });
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
 // exports.signin = (req, res) => {
 //   User.findOne({ email: req.body.email }).exec((error, user) => {
