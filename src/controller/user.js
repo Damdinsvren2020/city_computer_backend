@@ -9,41 +9,49 @@ const generateJwtToken = (_id, role) => {
   });
 };
 
-exports.signup = (req, res) => {
-  User.findOne({ email: req.body.email }).exec(async (error, user) => {
-    if (user)
-      return res.status(400).json({
-        error: "Хэрэглэгч бүртгэлтэй байна",
-      });
-
+exports.signup = async (req, res) => {
+  try {
+    console.log(req.body)
+    if (req.body === {}) return res.json({
+      success: false,
+      result: "Дахин оролдоно уу!"
+    })
     const { firstName, lastName, email, password } = req.body;
-    const hash_password = await bcrypt.hash(password, 10);
-    const _user = new User({
-      firstName,
-      lastName,
-      email,
-      hash_password,
-      username: shortid.generate(),
-    });
-
-    _user.save((error, user) => {
-      if (error) {
-        return res.status(400).json({
-          message: "Хэрэглэгч нэвтрэхэд алдаа гарлаа ",
-        });
-      }
-
-      if (user) {
+    const userExist = await User.findOne({ email: email })
+    if (userExist) return res.json({ success: false, result: "Email already registered" })
+    if (!userExist) {
+      const salt = 10;
+      const hash_password = await bcrypt.hash(password, salt);
+      const user = new User({
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        hash_password: hash_password,
+        username: shortid.generate(),
+      });
+      const savedUser = await user.save()
+      if (savedUser) {
         const token = generateJwtToken(user._id, user.role);
         const { _id, firstName, lastName, email, role, fullName } = user;
-        return res.status(201).json({
+        return res.json({
           success: true,
-          token,
+          token: token,
+          result: "Хэрэглэгч бүртгэглээ",
           user: { _id, firstName, lastName, email, role, fullName },
         });
       }
-    });
-  });
+    }
+  } catch (error) {
+    if (error) {
+      if (error.message === "data and salt arguments required") {
+        return console.log(error.message)
+      }
+      res.json({
+        success: false,
+        result: "Бүртгэхэд алдаа гарлаа"
+      })
+    }
+  }
 };
 
 exports.signin = (req, res) => {
@@ -82,5 +90,50 @@ exports.getUser = async (req, res) => {
     }
   } catch (error) {
     return res.status(400).json({ message: "алдаа гарлаа" });
+  }
+}
+
+exports.updateUser = async (req, res) => {
+  const { id } = req.params
+  const { email, lastName, firstName } = req.body
+  try {
+    const updatingUser = await User.findByIdAndUpdate(id, {
+      firstName: firstName,
+      lastName: lastName,
+      email: email
+    })
+    if (updatingUser) {
+      res.json({
+        success: true,
+        result: "Хэрэглэгчийн мэдээлэл засагдсан"
+      })
+    }
+  } catch (error) {
+    if (error) {
+      res.json({
+        success: false,
+        result: "Хэрэглэгчийн мэдээлэл засахад алдаа гарсан"
+      })
+    }
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  const { id } = req.params
+  try {
+    const deleteUser = await User.findByIdAndDelete(id)
+    if (deleteUser) {
+      res.json({
+        success: true,
+        result: "Deleted"
+      })
+    }
+  } catch (error) {
+    if (error) {
+      res.json({
+        success: false,
+        result: "Хэрэглэгчийн мэдээлэл устгахад алдаа гарсан"
+      })
+    }
   }
 }

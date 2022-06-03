@@ -5,6 +5,10 @@ const mongoose = require("mongoose");
 const bp = require("body-parser");
 const cors = require("cors");
 
+app.use(cors());
+app.use(bp.json({ extended: true, limit: "10mb" }));
+app.use(bp.urlencoded({ extended: true, limit: "10mb" }));
+
 const UserRoutes = require("./routes/user")
 const adminRoutes = require("./routes/admin/auth");
 const categoryRoutes = require("./routes/category");
@@ -25,9 +29,6 @@ mongoose
     console.log("Database connectod");
   });
 
-app.use(cors());
-app.use(bp.json({ extended: false, limit: "10mb" }));
-app.use(bp.urlencoded({ extended: false, limit: "10mb" }));
 
 app.use(express.json());
 app.use("/api", UserRoutes);
