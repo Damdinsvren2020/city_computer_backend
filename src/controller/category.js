@@ -25,24 +25,32 @@ function createCategories(categories, parentId = null) {
   return categoryList;
 }
 
-exports.addCategory = (req, res) => {
-  const categoryObj = {
-    name: req.body.name,
-    slug: `${slugify(req.body.name)}-${shortid.generate()}`,
-    createdBy: req.user._id,
-  };
+exports.addCategory = async (req, res) => {
+  try {
+    const categoryObj = {
+      name: req.body.name,
+      slug: `${slugify(req.body.name)}-${shortid.generate()}`,
+      createdBy: req.user._id,
+    };
 
-  if (req.body.parentId) {
-    categoryObj.parentId = req.body.parentId;
-  }
-
-  const cat = new Category(categoryObj);
-  cat.save((error, category) => {
-    if (error) return res.status(400).json({ error });
-    if (category) {
-      return res.status(201).json({ category });
+    if (req.file) {
+      categoryObj.categoryImage = "/public/" + req.file.filename;
     }
-  });
+
+    if (req.body.parentId) {
+      categoryObj.parentId = req.body.parentId;
+    }
+
+    const cat = new Category(categoryObj);
+    cat.save((error, category) => {
+      if (error) return res.json({ success: false, payload: error });
+      if (category) {
+        return res.json({ success: true, payload: category });
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 exports.getCategories = (req, res) => {
@@ -50,7 +58,7 @@ exports.getCategories = (req, res) => {
     if (error) return res.status(400).json({ error });
     if (categories) {
       const categoryList = createCategories(categories);
-      res.status(200).json({ categoryList });
+      res.status(200).json({ success: true, payload: categoryList });
     }
   });
 };
@@ -103,8 +111,8 @@ exports.deleteCategories = async (req, res) => {
   }
 
   if (deletedCategories.length == ids.length) {
-    res.status(201).json({ message: "Категори устглаа" });
+    res.status(201).json({ message: "Category амжилттай устлаа" });
   } else {
-    res.status(400).json({ message: "Устгахад алдаа гарлаа" });
+    res.status(400).json({ message: "Category устгахад алдаа гарлаа" });
   }
 };

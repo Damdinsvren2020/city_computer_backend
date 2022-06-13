@@ -6,6 +6,7 @@ const categorySchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    image: String,
     slug: {
       type: String,
       required: true,
@@ -17,8 +18,8 @@ const categorySchema = new mongoose.Schema(
     subCategory: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "subCategory"
-      }
+        ref: "subCategory",
+      },
     ],
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
