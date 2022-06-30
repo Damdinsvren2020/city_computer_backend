@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./src/server.js"
+    "start": "nodemon ./src/server.js",
+    "startAdmin": "cd .. && cd city_computer_admin && npm start",
+    "update": "cd .. && cd city_computer_admin && git add . && git commit -m 'update' && git push && cd .. && cd city_computer_backend && git add . && git commit -m 'update' && git push"
   },
   "author": "",
   "license": "ISC",

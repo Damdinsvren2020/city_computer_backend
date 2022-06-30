@@ -82,6 +82,11 @@ exports.createSubAngilal = asyncHandler(async (req, res, next) => {
   }
 
   const subangilal = await SubAngilal.create(req.body);
+  if (subangilal) {
+    const findCategory = await Angilal.findByIdAndUpdate(angilal._id, {
+      $addToSet: { SubAngilal: subangilal._id }
+    })
+  }
 
   res.status(200).json({
     success: true,
