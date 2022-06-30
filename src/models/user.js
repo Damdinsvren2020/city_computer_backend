@@ -1,72 +1,65 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
-const userSchema = new mongoose.Schema(
-  {
-    firstName: {
-      type: String,
-      required: true,
-      trim: true,
-      min: 3,
-      max: 20,
-    },
-    lastName: {
-      type: String,
-      required: true,
-      trim: true,
-      min: 3,
-      max: 20,
-    },
-    username: {
-      type: String,
-      required: true,
-      trim: true,
-      unique: true,
-      index: true,
-      lowercase: true,
-    },
-    email: {
-      type: String,
-      required: true,
-      trim: true,
-      unique: true,
-      lowercase: true,
-    },
-    wishList: [
-      {
-        type: mongoose.Types.ObjectId,
-        required: false
-      }
-    ],
-    hash_password: {
-      type: String,
-      required: true,
-    },
-    status: { type: String, enum: ['active', 'delete'], default: 'active' },
-    role: {
-      type: String,
-      enum: ["user", "admin", "super-admin"],
-      default: "user",
-    },
-    contactNumber: { type: String },
-    pofilePicture: { type: String },
+const UserSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: [true, "Хэрэглэгчийн нэрийг оруулна уу"],
   },
-  { timestamps: true }
-);
-
-// userSchema.virtual('password')
-// .set(function(password){
-//     this.hash_password = bcrypt.hashSync(password, 10);
-// });
-
-userSchema.virtual("fullName").get(function () {
-  return `${this.firstName} ${this.lastName}`;
+  email: {
+    type: String,
+    required: [true, "Хэрэглэгчийн имэйл хаягийг оруулж өгнө үү"],
+    unique: true,
+    match: [
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+      "Имэйл хаяг буруу байна.",
+    ],
+  },
+  role: {
+    type: String,
+    required: [true, "Хэрэглэгчийн эрхийг оруулна уу"],
+    enum: ["user", "manager"],
+    default: "user",
+  },
+  password: {
+    type: String,
+    minlength: 4,
+    required: [true, "Нууц үгээ оруулна уу"],
+    select: false,
+  },
+  resetPasswordToken: String,
+  resetPasswordExpire: Date,
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-userSchema.methods = {
-  authenticate: async function (password) {
-    return await bcrypt.compare(password, this.hash_password);
-  },
+UserSchema.pre("save", async function () {
+  console.time("salt");
+  const salt = await bcrypt.genSalt(10);
+  console.timeEnd("salt");
+
+  console.time("hash");
+  this.password = await bcrypt.hash(this.password, salt);
+  console.timeEnd("hash");
+});
+
+UserSchema.methods.getJsonWebToken = function () {
+  const token = jwt.sign(
+    { id: this._id, role: this.role },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "2h",
+    }
+  );
+
+  return token;
 };
 
-module.exports = mongoose.model("User", userSchema);
+UserSchema.methods.checkPassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
+
+module.exports = mongoose.model("User", UserSchema);

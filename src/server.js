@@ -1,6 +1,7 @@
 const express = require("express");
 const env = require("dotenv");
 const app = express();
+const path = require("path");
 const mongoose = require("mongoose");
 const bp = require("body-parser");
 const cors = require("cors");
@@ -8,14 +9,13 @@ const cors = require("cors");
 app.use(cors());
 app.use(bp.json({ extended: true, limit: "10mb" }));
 app.use(bp.urlencoded({ extended: true, limit: "10mb" }));
-
-const UserRoutes = require("./routes/user")
-const adminRoutes = require("./routes/admin/auth");
-const categoryRoutes = require("./routes/category");
-const productRoutes = require("./routes/product");
-
+const fileupload = require("express-fileupload");
+const bannerRoutes = require("./routes/admin/banner");
+const userRoutes = require("./routes/admin/user");
+const angilalRoutes = require("./routes/admin/angilal");
+const subangilalRoutes = require("./routes/admin/subangilal");
+const brandRoutes = require("./routes/admin/brand_router");
 env.config();
-
 
 mongoose
   .connect(
@@ -29,13 +29,16 @@ mongoose
     console.log("Database connectod");
   });
 
-
+app.use("/upload", express.static(path.join(__dirname, "upload")));
 app.use(express.json());
-app.use("/api", UserRoutes);
-app.use("/api", adminRoutes);
-app.use("/api", categoryRoutes);
-app.use("/api", productRoutes);
-
+app.use(fileupload());
+// app.use("/api", productCategoryRoutes);
+// app.use("/api", product_sub_categoryRoutes);
+app.use("/api", bannerRoutes);
+app.use("/api", userRoutes);
+app.use("/api", angilalRoutes);
+app.use("/api", subangilalRoutes);
+app.use("/api", brandRoutes);
 app.get("/data", (req, res, next) => {
   res.status(200).json({
     message: req.body,
