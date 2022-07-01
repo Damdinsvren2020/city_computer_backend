@@ -11,6 +11,10 @@ const productSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    SKU: {
+      type: String,
+      required: true,
+    },
     price: {
       type: Number,
       required: true,
@@ -19,28 +23,48 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    description: {
+    content: {
       type: String,
       required: true,
       trim: true,
     },
+    avatar: {
+      type: String,
+      required: true,
+    },
+    thumbnail: {
+      type: String,
+      required: true,
+    },
+    brand: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Brand"
+    },
     offer: { type: Number },
-    productPictures: [{ img: { type: String } }],
+    specs: [{
+      type: Object,
+      required: true,
+    }],
+    imagesProduct: [{
+      type: String,
+      required: false
+    }],
     reviews: [
       {
         userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         review: String,
       },
     ],
-    category: {
+    SubID: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
+      ref: "SubAngilal",
       required: true,
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: false,
     },
     updatedAt: Date,
   },

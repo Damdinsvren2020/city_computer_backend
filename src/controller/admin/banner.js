@@ -13,9 +13,11 @@ exports.createBanner = async (req, res, next) => {
     const md5 = file.md5;
     const URL = __dirname + "/../upload/" + md5 + extension;
     await util.promisify(file.mv)(URL);
+    const { thumbnail } = req.files
     const banner = new Banner({
-      link: `/upload/` + md5 + extension,
+      link: thumbnail[0].path,
     });
+
     const savedBanner = await banner.save();
     res.status(200).json({
       success: true,
