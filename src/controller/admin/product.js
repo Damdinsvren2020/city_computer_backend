@@ -82,6 +82,15 @@ const SubAngilal = require("../../models/subangilal");
 //     });
 // });
 
+exports.getProducts = async (req, res) => {
+    const findProducts = await Product.find().populate("brand").populate("SubID")
+    if (findProducts) {
+        res.json({
+            success: true,
+            result: findProducts
+        })
+    }
+}
 exports.createProduct = async (req, res, next) => {
     try {
         console.log(req.body)
