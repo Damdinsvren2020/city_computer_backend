@@ -5,19 +5,10 @@ const asyncHandler = require("express-async-handler");
 const paginate = require("../../utils/paginate");
 exports.createBanner = async (req, res, next) => {
   try {
-    const file = req.files.image;
-    const fileName = file.name;
-    const size = file.data.length;
-    const extension = path.extname(fileName);
-    if (size > 5000000) throw "File ийн хэмжээ 5mb";
-    const md5 = file.md5;
-    const URL = __dirname + "/../upload/" + md5 + extension;
-    await util.promisify(file.mv)(URL);
     const { thumbnail } = req.files
     const banner = new Banner({
       link: thumbnail[0].path,
     });
-
     const savedBanner = await banner.save();
     res.status(200).json({
       success: true,

@@ -83,16 +83,9 @@ exports.deleteAngilal = asyncHandler(async (req, res, next) => {
 exports.createZurag = async (req, res, next) => {
   try {
     const { name, description } = req.body;
-    const file = req.files.photo;
-    const fileName = file.name;
-    const size = file.data.length;
-    const extension = path.extname(fileName);
-    if (size > 5000000) throw "File ийн хэмжээ 5mb";
-    const md5 = file.md5;
-    const URL = __dirname + "/../../upload/" + md5 + extension;
-    await util.promisify(file.mv)(URL);
+    const { avatar } = req.body
     const angilal_image = new Angilal({
-      link: `/upload/` + md5 + extension,
+      link: avatar[0].path,
       name: name,
       description: description,
     });

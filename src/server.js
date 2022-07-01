@@ -8,9 +8,6 @@ const cors = require("cors");
 const multer = require("multer");
 
 
-
-
-const fileupload = require("express-fileupload");
 const bannerRoutes = require("./routes/admin/banner");
 const userRoutes = require("./routes/admin/user");
 const angilalRoutes = require("./routes/admin/angilal");
@@ -22,15 +19,15 @@ env.config();
 const imageFileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     if (file.fieldname === "document") {
-      cb(null, "files/docs");
+      cb(null, path.join(__dirname, "/files/docs"));
     } else {
-      cb(null, "files/images");
+      cb(null, path.join(__dirname, "/files/images"));
     }
   },
   filename: (req, file, cb) => {
     cb(
       null,
-      new Date().toISOString().replace(/\-/g, "").replace(/\:/g, "") +
+      new Date().toISOString().replace(/:/g, '-') +
       "-" +
       file.originalname
     );
@@ -87,7 +84,7 @@ mongoose
 app.use(cors());
 app.use(bp.json({ extended: true, limit: "10mb" }));
 app.use(bp.urlencoded({ extended: true, limit: "10mb" }));
-// app.use("/upload", express.static(path.join(__dirname, "upload")));
+app.use("/upload", express.static(path.join(__dirname, "upload")));
 app.use("/files", express.static(path.join(__dirname, "files")));
 app.use(
   multer({ storage: imageFileStorage, fileFilter: imageFileFilter }).fields([
@@ -107,6 +104,7 @@ app.use("/api", angilalRoutes);
 app.use("/api", subangilalRoutes);
 app.use("/api", brandRoutes);
 app.use("/api", productRoutes)
+app.use("/api", bannerRoutes)
 
 
 app.get("/data", (req, res, next) => {
