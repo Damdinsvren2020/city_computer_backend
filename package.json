@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./src/server.js",
+    "start": "nodemon server.js",
     "updateAdmin": "cd .. && cd city_computer_admin && git add . && git commit -m 'update' && git push",
     "updateServer": "git add . && git commit -m 'update' && git push"
   },

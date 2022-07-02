@@ -91,12 +91,29 @@ exports.getProducts = async (req, res) => {
         })
     }
 }
+
+exports.singleProduct = async (req, res) => {
+    try {
+        const { id } = req.params
+        const findSingle = await Product.findById(id).populate("brand").populate("SubID")
+        if (findSingle) {
+            res.json({
+                success: true,
+                result: findSingle
+            })
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 exports.createProduct = async (req, res, next) => {
     try {
-        console.log(req.body)
+        // console.log(req.body)
         // console.log(req.files)
         const { name, content, brand, SubID, price, quantity, SKU, specs } = req.body;
         const { avatar, thumbnail, images } = req.files;
+
         const newProduct = new Product({
             name: name,
             content: content,
@@ -114,7 +131,6 @@ exports.createProduct = async (req, res, next) => {
             const findAndOtherUpdate = await Product.findById(savedProduct._id)
             if (specs) {
                 specs.forEach(item => {
-                    console.log(item)
                     findAndOtherUpdate.specs = [...findAndOtherUpdate.specs, JSON.parse(item)];
                 })
             }

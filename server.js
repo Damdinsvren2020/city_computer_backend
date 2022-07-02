@@ -19,9 +19,9 @@ env.config();
 const imageFileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     if (file.fieldname === "document") {
-      cb(null, path.join(__dirname, "/files/docs"));
+      cb(null, "files/docs");
     } else {
-      cb(null, path.join(__dirname, "/files/images"));
+      cb(null, "files/images");
     }
   },
   filename: (req, file, cb) => {
