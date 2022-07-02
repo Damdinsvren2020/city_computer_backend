@@ -92,6 +92,17 @@ exports.getProducts = async (req, res) => {
     }
 }
 
+exports.getSingleSub = async (req, res) => {
+    const { id } = req.params
+    const findSub = await SubAngilal.findById(id).populate("angilal")
+    if (findSub) {
+        res.json({
+            success: true,
+            result: findSub
+        })
+    }
+}
+
 exports.singleProduct = async (req, res) => {
     try {
         const { id } = req.params
@@ -159,3 +170,68 @@ exports.createProduct = async (req, res, next) => {
         })
     }
 };
+
+exports.editProduct = async (req, res) => {
+    try {
+        const { id } = req.params
+        const { SubID, name, content, brand, price, quantity, SKU, specs, newAvatar, avatarOld, newThumbnail, thumbnailOld, newImages, imagesOld } = req.body
+        const { thumbnail, images, avatar } = req.files
+        const product = await Product.findById(id)
+        if (SubID) {
+            product.SubID = SubID
+        }
+        if (name) {
+            product.name = name
+        }
+        if (content) {
+            product.content = content
+        }
+        if (brand) {
+            product.brand = brand
+        }
+        if (price) {
+            product.price = price
+        }
+        if (quantity) {
+            product.quantity = quantity
+        }
+        if (SKU) {
+            product.SKU = SKU
+        }
+        if (newAvatar) {
+            product.avatar = avatar[0].path
+        } else {
+            product.avatar = avatarOld
+        }
+        if (newThumbnail) {
+            product.thumbnail = thumbnail[0].path
+        } else {
+            product.thumbnail = thumbnailOld
+        }
+        if (newImages) {
+            product.imagesProduct = [];
+            images.forEach(image => {
+                product.imagesProduct = [...product.imagesProduct, image.path];
+            })
+        } else {
+            product.imagesProduct = imagesOld
+        }
+        if (specs) {
+            product.specs = [];
+            specs.forEach(item => {
+                product.specs = [...product.specs, JSON.parse(item)];
+            })
+        }
+        const saveProduct = await product.save()
+        if (saveProduct) {
+            res.json({
+                success: true,
+            })
+        }
+    } catch (error) {
+        console.log(error)
+        res.json({
+            success: false,
+        })
+    }
+}
