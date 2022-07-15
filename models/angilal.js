@@ -33,6 +33,11 @@ const AngilalSchema = new mongoose.Schema(
         ref: "SubAngilal",
       },
     ],
+    productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+      required: false,
+    },
     createdAt: {
       type: Date,
       default: Date.now,

@@ -5,7 +5,6 @@ const jwt = require("jsonwebtoken");
 
 exports.register = asyncHandler(async (req, res, next) => {
   const user = await User.create(req.body);
-  console.log("user irsen vv", user);
 
   const token = user.getJsonWebToken();
   res.status(200).json({
@@ -30,9 +29,13 @@ exports.login = asyncHandler(async (req, res, next) => {
 
   const ok = await user.checkPassword(password);
 
-  const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
-    expiresIn: "2h",
-  });
+  const token = jwt.sign(
+    { id: user._id, role: user.role },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "2h",
+    }
+  );
 
   if (!ok) {
     throw new MyError("Имэйл болон нууц үгээ зөв оруулна уу", 401);

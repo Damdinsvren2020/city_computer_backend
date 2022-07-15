@@ -5,7 +5,7 @@ const { protect } = require("../../middreware/protect");
 const {
   getAngilaluud,
   getAngilal,
-  // createAngilal,
+  getAngilalById,
   createZurag,
   updateAngilal,
   deleteAngilal,
@@ -16,6 +16,7 @@ router.route("/angilal/image").post(createZurag);
 const { getSubAngilaluud } = require("../../controller/admin/subangilal");
 
 router.route("/:angilalId/sub").get(getSubAngilaluud);
+router.route("/Angilal/:id").post(getAngilalById);
 
 router
   .route("/angilal/:id")

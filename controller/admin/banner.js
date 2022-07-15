@@ -3,6 +3,7 @@ const path = require("path");
 const util = require("util");
 const asyncHandler = require("express-async-handler");
 const paginate = require("../../utils/paginate");
+
 exports.createBanner = async (req, res, next) => {
   try {
     const file = req.files.image;
@@ -11,11 +12,10 @@ exports.createBanner = async (req, res, next) => {
     const extension = path.extname(fileName);
     if (size > 5000000) throw "File ийн хэмжээ 5mb";
     const md5 = file.md5;
-    const URL = __dirname + "/../upload/" + md5 + extension;
+    const URL = __dirname + "../../files" + md5 + extension;
     await util.promisify(file.mv)(URL);
-    const { thumbnail } = req.files
     const banner = new Banner({
-      link: `/upload/` + md5 + extension,
+      link: `/files/` + md5 + extension,
     });
 
     const savedBanner = await banner.save();
@@ -28,7 +28,12 @@ exports.createBanner = async (req, res, next) => {
     console.log(err);
   }
 };
-
+exports.createBanners = async (req, res, next) => {
+  const { image } = req.files;
+  const newImage = new Image({
+    image: image[0].path,
+  });
+};
 exports.getBanners = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;

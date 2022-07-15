@@ -41,13 +41,30 @@ exports.getAngilal = asyncHandler(async (req, res, next) => {
   });
 });
 
-// exports.createAngilal = asyncHandler(async (req, res, next) => {
-//   const angilal = await Angilal.create(req.body);
-//   res.status(200).json({
-//     success: true,
-//     data: angilal,
-//   });
-// });
+exports.getAngilalById = async (req, res, next) => {
+  const id = req.params;
+  if (id) {
+    const findAngilal = await Angilal.find({ productId: id }).populate(
+      "Product"
+    );
+    if (findAngilal) {
+      return res.json({
+        success: true,
+        result: findAngilal,
+        count: findAngilal.length,
+      });
+    }
+  } else {
+    const findAngilal = await Angilal.find().populate("Product");
+    if (findAngilal) {
+      return res.json({
+        success: true,
+        result: findAngilal,
+        count: findAngilal.length,
+      });
+    }
+  }
+};
 
 exports.updateAngilal = asyncHandler(async (req, res, next) => {
   const angilal = await Angilal.findByIdAndUpdate(req.params.id, req.body, {
@@ -83,6 +100,7 @@ exports.deleteAngilal = asyncHandler(async (req, res, next) => {
 exports.createZurag = async (req, res, next) => {
   try {
     const { name, description } = req.body;
+    console.log("zurag test", req.body);
     const file = req.files.photo;
     const fileName = file.name;
     const size = file.data.length;

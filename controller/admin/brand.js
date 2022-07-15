@@ -24,6 +24,7 @@ exports.getBrands = asyncHandler(async (req, res, next) => {
     success: true,
     data: brand,
     pagination,
+    count: brand.length,
   });
 });
 

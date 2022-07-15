@@ -39,23 +39,37 @@ const productSchema = new mongoose.Schema(
     brand: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "Brand"
+      ref: "Brand",
     },
     offer: { type: Number },
-    specs: [{
-      type: Object,
-      required: true,
-    }],
-    imagesProduct: [{
-      type: String,
-      required: false
-    }],
+    specs: [
+      {
+        type: Object,
+        required: true,
+      },
+    ],
+    imagesProduct: [
+      {
+        type: String,
+        required: false,
+      },
+    ],
     reviews: [
       {
         userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         review: String,
       },
     ],
+    angilalId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "angilal",
+      required: false,
+    },
+    angilalId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "brand",
+      required: false,
+    },
     SubID: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "SubAngilal",
