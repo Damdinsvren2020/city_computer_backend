@@ -14,6 +14,7 @@ const subangilalRoutes = require("./routes/admin/subangilal");
 const brandRoutes = require("./routes/admin/brand_router");
 const productRoutes = require("./routes/admin/product");
 const BannerImagesRoutes = require("./routes/admin/banner_images");
+const RoleRoutes = require("./routes/admin/role");
 env.config();
 
 const imageFileStorage = multer.diskStorage({
@@ -102,6 +103,7 @@ app.use("/api", brandRoutes);
 app.use("/api", productRoutes);
 app.use("/api", bannerRoutes);
 app.use("/api", BannerImagesRoutes);
+app.use("/api", RoleRoutes);
 
 app.get("/data", (req, res, next) => {
   res.status(200).json({
