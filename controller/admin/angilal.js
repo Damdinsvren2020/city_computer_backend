@@ -67,30 +67,55 @@ exports.getAngilalById = async (req, res, next) => {
 };
 
 exports.updateAngilal = asyncHandler(async (req, res, next) => {
-  const angilal = await Angilal.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+  try {
+    const { id } = req.params;
+    console.log("data uurchluh", req.params);
 
-  if (!angilal) {
-    throw new MyError(req.params.id + " ID-тэй ангилал байхгүйээээ.", 400);
+    const { name, description, newAvatar, avatarOld } = req.body;
+    const { avatar } = req.files;
+    console.log(avatar, newAvatar, avatarOld)
+    const banner_images = await Angilal.findByIdAndUpdate(id);
+    if (name) {
+      banner_images.name = name;
+    }
+    if (newAvatar) {
+      banner_images.link = avatar[0].path;
+    } else {
+      banner_images.link = avatarOld;
+    }
+    if (description) {
+      banner_images.description = description;
+    }
+    const saveBanner_images = await banner_images.save();
+
+    if (saveBanner_images) {
+      res.json({
+        success: true,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+    });
   }
-
-  res.status(200).json({
-    success: true,
-    data: angilal,
-  });
 });
 
 exports.deleteAngilal = asyncHandler(async (req, res, next) => {
   const angilal = await Angilal.findById(req.params.id);
 
   if (!angilal) {
-    throw new MyError(req.params.id + " ID-тэй ангилал байхгүйээээ.", 400);
+    throw new MyError(req.params.id + " ID-тэй ангилал байхгүй байна.", 404);
   }
-
-  angilal.remove();
-
+  if (angilal.SubAngilal.length !== 0) {
+    return res.json({
+      success: false,
+      result: "Энэ ангилалыг устгаж болохгүй!",
+      description: "дотор байгаа дэд ангилал болон бараа бүгд устах аюултай"
+    })
+  } else {
+    angilal.remove()
+  }
   res.status(200).json({
     success: true,
     data: angilal,

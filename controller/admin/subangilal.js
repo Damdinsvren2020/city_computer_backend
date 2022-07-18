@@ -3,6 +3,7 @@ const Angilal = require("../../models/angilal");
 const MyError = require("../../utils/myError");
 const asyncHandler = require("express-async-handler");
 const paginate = require("../../utils/paginate");
+const Product = require("../../models/product");
 
 exports.getSubAngilals = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
@@ -100,9 +101,14 @@ exports.deleteAngilal = asyncHandler(async (req, res, next) => {
   if (!angilal) {
     throw new MyError(req.params.id + " ID-тэй ангилал байхгүй байна.", 404);
   }
-
-  angilal.remove();
-
+  if (angilal) {
+    angilal.SubAngilal.length !== 0 && angilal?.SubAngilal?.forEach(async (Element) => {
+      const findProduct = await Product.findByIdAndUpdate(Element, {
+        angilal: null,
+        angilalId: null
+      })
+    })
+  }
   res.status(200).json({
     success: true,
     data: angilal,
@@ -110,17 +116,21 @@ exports.deleteAngilal = asyncHandler(async (req, res, next) => {
 });
 
 exports.updateAngilal = asyncHandler(async (req, res, next) => {
-  const angilal = await Angilal.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-
-  if (!angilal) {
-    throw new MyError(req.params.id + " ID-тэй ангилал байхгүй байна.", 400);
+  const { name, content } = req.body
+  console.log(name, content)
+  const findSUbAngilal = await SubAngilal.findById(req.params.id)
+  console.log(findSUbAngilal)
+  if (name) {
+    findSUbAngilal.name = name
+  }
+  if (content) {
+    findSUbAngilal.content = content
+  }
+  const saveSub = await findSUbAngilal.save()
+  if (saveSub) {
+    res.json({
+      success: true,
+    })
   }
 
-  res.status(200).json({
-    success: true,
-    data: angilal,
-  });
 });

@@ -21,6 +21,6 @@ router.route("/Angilal/:id").post(getAngilalById);
 router
   .route("/angilal/:id")
   .get(getAngilal)
-  .put(protect, updateAngilal)
-  .delete(protect, deleteAngilal);
+  .put(updateAngilal)
+  .delete(deleteAngilal);
 module.exports = router;

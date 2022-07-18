@@ -175,7 +175,28 @@ exports.editProduct = async (req, res) => {
     const { thumbnail, images, avatar } = req.files;
     const product = await Product.findById(id);
     if (SubID) {
-      product.SubID = SubID;
+      const findProductSub = await Product.findById(id)
+      if (findProductSub) {
+        const subAndRemoveItem = await SubAngilal.findByIdAndUpdate(findProductSub.SubID, {
+          $pull: { product: id }
+        })
+        if (subAndRemoveItem) {
+          const findProduct = await Product.findByIdAndUpdate(id, {
+            SubID: null,
+            angilalId: null
+          })
+          if (findProduct) {
+            const findAngilal = await SubAngilal.findByIdAndUpdate(SubID, {
+              $addToSet: { product: id }
+            })
+            if (findAngilal) {
+              product.SubID = findAngilal._id
+              product.angilalId = findAngilal.angilal
+            }
+          }
+        }
+      }
+
     }
     if (name) {
       product.name = name;
@@ -232,3 +253,24 @@ exports.editProduct = async (req, res) => {
     });
   }
 };
+
+exports.setChosenAngilal = asyncHandler(async (req, res) => {
+  try {
+    const { id } = req.params
+    const { SubID } = req.body
+    console.log(SubID)
+    const findSub = await SubAngilal.findById(SubID)
+    const findProduct = await Product.findByIdAndUpdate(id, {
+      SubID: findSub._id,
+      angilalId: findSub.angilal
+    })
+    if (findProduct) {
+      res.json({
+        success: true,
+        result: findProduct
+      })
+    }
+  } catch (error) {
+    console.log(error)
+  }
+})

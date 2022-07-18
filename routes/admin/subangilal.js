@@ -10,12 +10,12 @@ const {
 } = require("../../controller/admin/subangilal");
 const router = express.Router();
 
-router.route("/subangilal").get(getSubAngilals).post(protect, createSubAngilal);
+router.route("/subangilal").get(getSubAngilals).post(createSubAngilal);
 
 router
   .route("/subangilal/:id")
   .get(getSubAngilaluud)
-  .delete(protect, deleteAngilal)
-  .put(protect, updateAngilal);
+  .delete(deleteAngilal)
+  .put(updateAngilal);
 
 module.exports = router;
