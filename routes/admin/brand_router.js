@@ -13,6 +13,6 @@ router.route("/brand/image").post(createBrand);
 
 router
   .route("/brand/:id")
-  .put(protect, updateBrand)
-  .delete(protect, deleteBrand);
+  .put(updateBrand)
+  .delete(deleteBrand);
 module.exports = router;

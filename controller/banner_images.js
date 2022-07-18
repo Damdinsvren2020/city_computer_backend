@@ -45,7 +45,6 @@ exports.deleteBanner = async (req, res) => {
     if (findSingle) {
       res.json({
         success: true,
-        result: findSingle,
       });
     }
   } catch (error) {
@@ -91,7 +90,7 @@ exports.editBanner_images = async (req, res) => {
     const { id } = req.params;
     console.log("data uurchluh", req.params);
 
-    const { name, newThumbnail, thumbnailOld } = req.body;
+    const { name, orders, newThumbnail, thumbnailOld } = req.body;
     const { thumbnail } = req.files;
     const banner_images = await Banner_images.findByIdAndUpdate(id);
     if (name) {
@@ -102,7 +101,10 @@ exports.editBanner_images = async (req, res) => {
     } else {
       banner_images.thumbnail = thumbnailOld;
     }
-    const saveBanner_images = await Banner_images.save();
+    if (orders) {
+      banner_images.orders = orders;
+    }
+    const saveBanner_images = await banner_images.save();
 
     if (saveBanner_images) {
       res.json({

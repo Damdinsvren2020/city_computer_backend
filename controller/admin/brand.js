@@ -32,16 +32,9 @@ exports.createBrand = async (req, res, next) => {
   try {
     const { name, description } = req.body;
     console.log("image data", req.body);
-    const file = req.files.photo;
-    const fileName = file.name;
-    const size = file.data.length;
-    const extension = path.extname(fileName);
-    if (size > 5000000) throw "File ийн хэмжээ 5mb";
-    const md5 = file.md5;
-    const URL = __dirname + "/../../upload/" + md5 + extension;
-    await util.promisify(file.mv)(URL);
+    const { thumbnail } = req.files
     const Brand_image = new Brand({
-      link: `/upload/` + md5 + extension,
+      link: thumbnail[0].path,
       name: name,
       description: description,
     });
@@ -57,19 +50,38 @@ exports.createBrand = async (req, res, next) => {
 };
 
 exports.updateBrand = asyncHandler(async (req, res, next) => {
-  const brand = await Brand.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+  try {
+    const { id } = req.params;
+    // console.log("data uurchluh", req.params);
 
-  if (!brand) {
-    throw new MyError(req.params.id + " ID-тэй брэнд байхгүйээээ.", 400);
+    const { name, description, newThumbnail, thumbnailOld } = req.body;
+    const { thumbnail } = req.files;
+    // console.log(newThumbnail, thumbnailOld, thumbnail)
+    const banner_images = await Brand.findByIdAndUpdate(id);
+    if (name) {
+      banner_images.name = name;
+    }
+    if (newThumbnail) {
+      banner_images.link = thumbnail[0].path;
+    } else {
+      banner_images.link = thumbnailOld;
+    }
+    if (description) {
+      banner_images.description = description;
+    }
+    const saveBanner_images = await banner_images.save();
+
+    if (saveBanner_images) {
+      res.json({
+        success: true,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+    });
   }
-
-  res.status(200).json({
-    success: true,
-    data: brand,
-  });
 });
 
 exports.deleteBrand = asyncHandler(async (req, res, next) => {

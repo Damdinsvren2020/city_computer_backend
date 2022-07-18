@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon server.js",
-    "updateAdmin": "cd .. && cd admin && git add . && git commit -m 'update' && git push",
+    "updateAdmin": "cd .. && cd city_computer_admin && git add . && git commit -m 'update' && git push",
     "updateServer": "git add . && git commit -m 'update' && git push"
   },
   "author": "",
