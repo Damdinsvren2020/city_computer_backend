@@ -8,11 +8,11 @@ const {
   deleteBrand,
 } = require("../../controller/admin/brand");
 
-router.route("/brand").get(getBrands);
-router.route("/brand/image").post(createBrand);
+router.route("/brand").get(protect, getBrands);
+router.route("/brand/image").post(protect, createBrand);
 
 router
   .route("/brand/:id")
-  .put(updateBrand)
-  .delete(deleteBrand);
+  .put(protect, updateBrand)
+  .delete(protect, deleteBrand);
 module.exports = router;

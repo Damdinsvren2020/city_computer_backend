@@ -40,13 +40,13 @@ const imageFileFilter = (req, file, cb) => {
       file.mimetype === "application/pdf" ||
       file.mimetype === "application/msword" ||
       file.mimetype ===
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
       file.mimetype === "application/vnd.ms-excel" ||
       file.mimetype ===
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
       file.mimetype === "application/vnd.ms-powerpoint" ||
       file.mimetype ===
-        "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation"
     ) {
       cb(null, true);
     } else {
@@ -93,42 +93,7 @@ app.use(
   ])
 );
 
-// app.use("/*", async function (req, res, next) {
-//   let token =
-//     req.body.token ||
-//     req.query.token ||
-//     req.headers["token"] ||
-//     req.cookies.token ||
-//     null;
-//   // req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer'
-//   // let token = req.headers.authorization.split(' ')[1]
-//   if (token) {
-//     jwt.verify(token, config.sessionSecret, async function (err, decoded) {
-//       if (err) {
-//         logger.error(
-//           "check token: " +
-//             JSON.stringify({
-//               error: err,
-//             })
-//         );
-//         req.user = null;
-//         next();
-//       } else {
-//         let result = await User.findOne({ _id: decoded.id });
-//         if (result) {
-//           req.user = result;
-//           next();
-//         } else {
-//           req.user = null;
-//           next();
-//         }
-//       }
-//     });
-//   } else {
-//     req.user = null;
-//     next();
-//   }
-// });
+// 
 
 app.use(express.json());
 // app.use(fileupload());

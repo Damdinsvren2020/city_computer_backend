@@ -51,8 +51,6 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
 
 exports.login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
-
-  console.log(email, password);
   if (!email || !password) {
     throw new MyError("Имэйл болон нууц үгээ дамжуулна уу", 400);
   }

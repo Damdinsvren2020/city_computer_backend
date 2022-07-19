@@ -1,5 +1,5 @@
 const express = require("express");
-
+const { protect } = require("../../middreware/protect")
 const {
   getBanner_images,
   singleBanner,
@@ -10,13 +10,13 @@ const {
 } = require("../../controller/banner_images");
 const router = express.Router();
 
-router.route("/bannerimages").get(getBanner_images).post(createBanner_images);
+router.route("/bannerimages").get(protect, getBanner_images).post(protect, createBanner_images);
 router
   .route("/bannerimages/:id")
-  .get(singleBanner)
-  .put(editBanner_images)
-  .delete(deleteBanner);
+  .get(protect, singleBanner)
+  .put(protect, editBanner_images)
+  .delete(protect, deleteBanner);
 
-router.route("/setBannerImagesStatus").post(deleteBanner_images);
+router.route("/setBannerImagesStatus").post(protect, deleteBanner_images);
 
 module.exports = router;
