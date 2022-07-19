@@ -85,8 +85,8 @@ exports.createSubAngilal = asyncHandler(async (req, res, next) => {
   const subangilal = await SubAngilal.create(req.body);
   if (subangilal) {
     const findCategory = await Angilal.findByIdAndUpdate(angilal._id, {
-      $addToSet: { SubAngilal: subangilal._id }
-    })
+      $addToSet: { SubAngilal: subangilal._id },
+    });
   }
 
   res.status(200).json({
@@ -101,19 +101,16 @@ exports.deleteAngilal = asyncHandler(async (req, res, next) => {
   if (!angilal) {
     throw new MyError(req.params.id + " ID-тэй ангилал байхгүй байна.", 404);
   }
-  const findAngilal = await Angilal.findByIdAndUpdate(angilal.angilal, {
-    $pull: { SubAngilal: angilal._id }
-  })
   if (angilal.product.length !== 0) {
-    angilal?.product?.forEach(async (Element) => {
+    await angilal?.product?.forEach(async (Element) => {
       const findProduct = await Product.findByIdAndUpdate(Element, {
-        angilal: null,
-        angilalId: null
-      })
-    })
-    angilal.remove()
+        SubID: null,
+        angilalId: null,
+      });
+    });
+    angilal.remove();
   } else {
-    angilal.remove()
+    angilal.remove();
   }
   res.status(200).json({
     success: true,
@@ -122,21 +119,20 @@ exports.deleteAngilal = asyncHandler(async (req, res, next) => {
 });
 
 exports.updateAngilal = asyncHandler(async (req, res, next) => {
-  const { name, content } = req.body
-  console.log(name, content)
-  const findSUbAngilal = await SubAngilal.findById(req.params.id)
-  console.log(findSUbAngilal)
+  const { name, content } = req.body;
+  console.log(name, content);
+  const findSUbAngilal = await SubAngilal.findById(req.params.id);
+  console.log(findSUbAngilal);
   if (name) {
-    findSUbAngilal.name = name
+    findSUbAngilal.name = name;
   }
   if (content) {
-    findSUbAngilal.content = content
+    findSUbAngilal.content = content;
   }
-  const saveSub = await findSUbAngilal.save()
+  const saveSub = await findSUbAngilal.save();
   if (saveSub) {
     res.json({
       success: true,
-    })
+    });
   }
-
 });

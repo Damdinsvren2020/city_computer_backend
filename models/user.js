@@ -16,18 +16,27 @@ const UserSchema = new mongoose.Schema({
       "Имэйл хаяг буруу байна.",
     ],
   },
-  role: {
-    type: String,
-    required: [true, "Хэрэглэгчийн эрхийг оруулна уу"],
-    enum: ["user", "manager"],
-    default: "user",
-  },
+
+  role: { type: String, enum: ["admin", "user"], default: "user" },
+
   password: {
     type: String,
     minlength: 4,
     required: [true, "Нууц үгээ оруулна уу"],
     select: false,
   },
+  wishlist: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "product",
+    },
+  ],
+  coupon: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "coupon",
+    },
+  ],
   resetPasswordToken: String,
   resetPasswordExpire: Date,
   createdAt: {
