@@ -1,13 +1,28 @@
+const { validationResult, matchedData } = require("express-validator");
+const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const MyError = require("../utils/myError");
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const paginate = require("../utils/paginate");
+const winston = require("winston");
+function compareAsync(param1, param2) {
+  return new Promise(function (resolve, reject) {
+    bcrypt.compare(param1, param2, function (err, res) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+}
 
 exports.register = asyncHandler(async (req, res, next) => {
   const user = await User.create(req.body);
-  const token = user.getJsonWebToken();
-  res.status(200).json({
+  // console.log("daaaaa", req.body);
+  const token = await user.getJsonWebToken();
+  res.json({
     success: true,
     token,
     user: user,
@@ -37,6 +52,7 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
 exports.login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
+  console.log(email, password);
   if (!email || !password) {
     throw new MyError("Имэйл болон нууц үгээ дамжуулна уу", 400);
   }
@@ -67,3 +83,54 @@ exports.login = asyncHandler(async (req, res, next) => {
     user: user,
   });
 });
+
+exports.saveRegister = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res
+      .status(200)
+      .json({ success: false, message: errors.array()[0].msg });
+  }
+  let data = matchedData(req);
+  if (data._ide) {
+    await user.updateOne({ _id: data._id }, { ...data }).exec((err) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ success: false, message: "Системд алдаа гарлаа" });
+      }
+      return res
+        .status(200)
+        .json({ success: true, message: "Амжилттай хадгалагдлаа Update" });
+    });
+  } else {
+    if (data.password === data.passwordRepeat) {
+      const user = User();
+      const pass = bcrypt.hashSync();
+      user.email = req.body.email;
+      user.username = req.body.username;
+      user.role = req.body.role;
+      user.password = pass;
+      user.save((err, sss) => {
+        console.log("fefefefefe", sss);
+        if (err) {
+          winston.error(err);
+          return res
+            .status(500)
+            .json({ success: false, message: "Системд алдаа гарлаа" });
+        }
+        return res.status(200).json({
+          success: true,
+          sucmod: true,
+          message: "Амжилттай хадгалагдлаа",
+        });
+      });
+    } else {
+      return res.json({
+        success: false,
+        sucmod: true,
+        message: "Нууц үг зөрж байна",
+      });
+    }
+  }
+};
