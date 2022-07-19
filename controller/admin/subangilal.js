@@ -96,18 +96,24 @@ exports.createSubAngilal = asyncHandler(async (req, res, next) => {
 });
 
 exports.deleteAngilal = asyncHandler(async (req, res, next) => {
-  const angilal = await Angilal.findById(req.params.id);
+  const angilal = await SubAngilal.findById(req.params.id);
 
   if (!angilal) {
     throw new MyError(req.params.id + " ID-тэй ангилал байхгүй байна.", 404);
   }
-  if (angilal) {
-    angilal.SubAngilal.length !== 0 && angilal?.SubAngilal?.forEach(async (Element) => {
+  const findAngilal = await Angilal.findByIdAndUpdate(angilal.angilal, {
+    $pull: { SubAngilal: angilal._id }
+  })
+  if (angilal.product.length !== 0) {
+    angilal?.product?.forEach(async (Element) => {
       const findProduct = await Product.findByIdAndUpdate(Element, {
         angilal: null,
         angilalId: null
       })
     })
+    angilal.remove()
+  } else {
+    angilal.remove()
   }
   res.status(200).json({
     success: true,

@@ -15,6 +15,7 @@ const brandRoutes = require("./routes/admin/brand_router");
 const productRoutes = require("./routes/admin/product");
 const BannerImagesRoutes = require("./routes/admin/banner_images");
 const RoleRoutes = require("./routes/admin/role");
+const CouponRoutes = require("./routes/admin/coupon");
 env.config();
 
 const imageFileStorage = multer.diskStorage({
@@ -39,13 +40,13 @@ const imageFileFilter = (req, file, cb) => {
       file.mimetype === "application/pdf" ||
       file.mimetype === "application/msword" ||
       file.mimetype ===
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
       file.mimetype === "application/vnd.ms-excel" ||
       file.mimetype ===
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
       file.mimetype === "application/vnd.ms-powerpoint" ||
       file.mimetype ===
-        "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation"
     ) {
       cb(null, true);
     } else {
@@ -104,6 +105,7 @@ app.use("/api", productRoutes);
 app.use("/api", bannerRoutes);
 app.use("/api", BannerImagesRoutes);
 app.use("/api", RoleRoutes);
+app.use("/api", CouponRoutes)
 
 app.get("/data", (req, res, next) => {
   res.status(200).json({

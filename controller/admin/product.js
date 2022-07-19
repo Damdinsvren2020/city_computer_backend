@@ -274,3 +274,39 @@ exports.setChosenAngilal = asyncHandler(async (req, res) => {
     console.log(error)
   }
 })
+exports.removeProduct = asyncHandler(async (req, res) => {
+  const { id } = req.params
+  console.log(id)
+  const findProduct = await Product.findByIdAndRemove(id)
+  const findSubAndRemoveProduct = await SubAngilal.findByIdAndUpdate(findProduct.SubID, {
+    $pull: { product: findProduct._id }
+  })
+  if (findSubAndRemoveProduct) {
+    res.json({
+      success: true,
+    })
+  }
+})
+
+exports.saveProductSale = asyncHandler(async (req, res) => {
+  const { id } = req.params
+  const { offer } = req.body
+  if (offer === 0) {
+    const findProduct = await Product.findByIdAndUpdate(id, {
+      offer: null
+    })
+    if (findProduct) {
+      return res.json({
+        success: true,
+      })
+    }
+  }
+  const findProduct = await Product.findByIdAndUpdate(id, {
+    offer: offer
+  })
+  if (findProduct) {
+    res.json({
+      success: true,
+    })
+  }
+})

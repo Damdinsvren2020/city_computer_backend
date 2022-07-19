@@ -41,6 +41,7 @@ const productSchema = new mongoose.Schema(
       required: true,
       ref: "Brand",
     },
+    isOnSale: { type: Boolean },
     offer: { type: Number },
     specs: [
       {
