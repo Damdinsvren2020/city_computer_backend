@@ -63,12 +63,12 @@ const productSchema = new mongoose.Schema(
     ],
     angilalId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "angilal",
+      ref: "Angilal",
       required: false,
     },
-    angilalId: {
+    brand: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "brand",
+      ref: "Brand",
       required: false,
     },
     SubID: {

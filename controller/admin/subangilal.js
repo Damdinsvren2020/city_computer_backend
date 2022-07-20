@@ -53,6 +53,31 @@ exports.getSubAngilaluud = asyncHandler(async (req, res, next) => {
   });
 });
 
+exports.getSubAngilaluud = asyncHandler(async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 2;
+  const sort = req.query.sort;
+  const select = req.query.select;
+
+  ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
+
+  const pagination = await paginate(page, limit, SubAngilal);
+  const subangilal = await SubAngilal.find(
+    { ...req.query, angilal: req.params.angilalId },
+    select
+  )
+    .sort(sort)
+    .skip(pagination.start - 1)
+    .limit(limit);
+
+  res.status(200).json({
+    success: true,
+    count: subangilal.length,
+    data: subangilal,
+    pagination,
+  });
+});
+
 exports.getSubAngilal = asyncHandler(async (req, res, next) => {
   const subangilal = await SubAngilal.findById(req.params.id);
 

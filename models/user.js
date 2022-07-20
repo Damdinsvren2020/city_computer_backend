@@ -25,12 +25,10 @@ const UserSchema = new mongoose.Schema({
     required: [true, "Нууц үгээ оруулна уу"],
     select: false,
   },
-  wishlist: [
-    {
-      type: mongoose.Types.ObjectId,
-      ref: "product",
-    },
-  ],
+  wishlist: {
+    type: mongoose.Types.ObjectId,
+    ref: "wishlist",
+  },
   coupon: [
     {
       type: mongoose.Types.ObjectId,

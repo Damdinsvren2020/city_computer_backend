@@ -6,6 +6,7 @@ const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const paginate = require("../utils/paginate");
 const winston = require("winston");
+const Wishlist = require("../models/user/wishlist");
 function compareAsync(param1, param2) {
   return new Promise(function (resolve, reject) {
     bcrypt.compare(param1, param2, function (err, res) {
@@ -22,6 +23,17 @@ exports.register = asyncHandler(async (req, res, next) => {
   const user = await User.create(req.body);
   // console.log("daaaaa", req.body);
   const token = await user.getJsonWebToken();
+  if (token) {
+    const newWishList = new Wishlist({
+      user: user._id
+    })
+    const saved = await newWishList.save()
+    if (saved) {
+      const finduserAndsetWish = await User.findByIdAndUpdate(user._id, {
+        wishlist: saved._id
+      })
+    }
+  }
   res.json({
     success: true,
     token,

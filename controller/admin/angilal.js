@@ -29,6 +29,7 @@ exports.getAngilaluud = asyncHandler(async (req, res, next) => {
 });
 
 exports.getAngilal = asyncHandler(async (req, res, next) => {
+  console.log(req.params)
   const angilal = await Angilal.findById(req.params.id).populate("SubAngilal");
 
   if (!angilal) {

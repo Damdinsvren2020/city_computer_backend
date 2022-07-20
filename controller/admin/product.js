@@ -26,18 +26,40 @@ exports.getProducts = asyncHandler(async (req, res) => {
   //   }
 });
 
+exports.getProductByAngilal = asyncHandler(async (req, res) => {
+  const { id } = req.params
+  console.log(id)
+  const findProducts = await Product.find({ angilalId: id })
+    .populate("brand")
+    .populate("SubID")
+  if (findProducts) {
+    res.json({
+      success: true,
+      result: findProducts,
+    });
+  }
+})
+
 exports.getProductById = async (req, res) => {
   const { id } = req.params;
   if (id) {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const sort = req.query.sort;
+    const select = req.query.select;
+    ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
+    const pagination = await paginate(page, limit, Product);
+
     const findProducts = await Product.find({ angilalId: id })
       .populate("brand")
-      .populate("SubID");
-
+      .populate("SubID")
+      .sort(sort)
+      .skip(pagination.start - 1);
     if (findProducts) {
       return res.json({
         success: true,
         result: findProducts,
-        count: findProducts.length,
+        pagination,
       });
     }
   } else {
@@ -53,6 +75,64 @@ exports.getProductById = async (req, res) => {
     }
   }
 };
+
+exports.getProductBySubID = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (id) {
+    const findSub = await SubAngilal.findById(id).populate("product").populate({ path: 'product', populate: { path: 'brand' } })
+    if (findSub) {
+      return res.json({
+        success: true,
+        result: findSub.product,
+        count: findSub.product.length,
+      });
+    }
+  }
+  const findSub = await SubAngilal.find().populate("product").populate({ path: 'product', populate: { path: 'brand' } })
+  if (findSub) {
+    res.json({
+      success: true,
+      result: findSub.product,
+      count: findSub.product.length,
+    });
+  }
+
+})
+exports.getProductByBrand = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (id) {
+    const findProduct = await Product.find({ brand: id }).populate("brand").populate("SubID");
+    if (findProduct) {
+      return res.json({
+        success: true,
+        result: findProduct,
+        count: findProduct.length,
+      });
+    }
+  }
+
+  const findProduct = await Product.find().populate("brand").populate("SubID");
+  if (findProduct) {
+    res.json({
+      success: true,
+      result: findProduct,
+      count: findProduct.length,
+    });
+  }
+
+})
+
+exports.getProductByMinMax = asyncHandler(async (req, res) => {
+  const { min, max } = req.body
+  const findProduct = await Product.find({ price: { $gte: min, $lte: max } }).populate("brand").populate("SubID");
+  if (findProduct) {
+    return res.json({
+      success: true,
+      result: findProduct,
+      count: findProduct.length,
+    });
+  }
+})
 
 exports.getSingleSub = async (req, res) => {
   const { id } = req.params;
