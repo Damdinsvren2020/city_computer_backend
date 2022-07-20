@@ -9,7 +9,8 @@ const {
   createZurag,
   updateAngilal,
   deleteAngilal,
-  getSubAngilaluudByID
+  getSubAngilaluudByID,
+  verifyAngilal
 } = require("../../controller/admin/angilal");
 
 router.route("/angilal").get(getAngilaluud);
@@ -18,6 +19,7 @@ const { getSubAngilaluud } = require("../../controller/admin/subangilal");
 
 router.route("/:angilalId/sub").get(getSubAngilaluud);
 router.route("/Angilal/:id").post(protect, getAngilalById);
+router.route("/verifyAngilal/:name").post(verifyAngilal)
 
 router
   .route("/angilal/:id")

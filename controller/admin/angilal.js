@@ -28,8 +28,18 @@ exports.getAngilaluud = asyncHandler(async (req, res, next) => {
   });
 });
 
+exports.verifyAngilal = asyncHandler(async (req, res) => {
+  const { name } = req.params
+  const findAngilal = await Angilal.findOne({ name: name })
+  if (findAngilal) {
+    res.json({
+      success: true,
+      id: findAngilal._id
+    })
+  }
+})
+
 exports.getAngilal = asyncHandler(async (req, res, next) => {
-  console.log(req.params)
   const angilal = await Angilal.findById(req.params.id).populate("SubAngilal");
 
   if (!angilal) {

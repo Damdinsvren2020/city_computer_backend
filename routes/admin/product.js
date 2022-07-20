@@ -31,9 +31,11 @@ router
 router.route("/productSale/:id").post(protect, saveProductSale);
 router.route("/productSub/:id").get(protect, getSingleSub);
 router.route("/productAngilal/:id").post(getProductById);
-router.route("/productSubAngilal/:id").post(getProductBySubID);
-router.route("/productBrand/:id").post(getProductByBrand);
-router.route("/productMinMax").post(getProductByMinMax);
+
+
+router.route("/productSubAngilal/:id/:angilal").post(getProductBySubID);
+router.route("/productBrand/:id/:angilal").post(getProductByBrand);
+router.route("/productMinMax/:angilal").post(getProductByMinMax);
 
 router.route("/productChoseAngilal/:id").post(protect, setChosenAngilal);
 

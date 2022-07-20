@@ -77,9 +77,9 @@ exports.getProductById = async (req, res) => {
 };
 
 exports.getProductBySubID = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { id, angilal } = req.params;
   if (id) {
-    const findSub = await SubAngilal.findById(id).populate("product").populate({ path: 'product', populate: { path: 'brand' } })
+    const findSub = await SubAngilal.findOne({ _id: id }).populate("product").populate({ path: 'product', populate: { path: 'brand' } })
     if (findSub) {
       return res.json({
         success: true,
@@ -88,7 +88,7 @@ exports.getProductBySubID = asyncHandler(async (req, res) => {
       });
     }
   }
-  const findSub = await SubAngilal.find().populate("product").populate({ path: 'product', populate: { path: 'brand' } })
+  const findSub = await SubAngilal.findOne({ angilal: angilal }).populate("product").populate({ path: 'product', populate: { path: 'brand' } })
   if (findSub) {
     res.json({
       success: true,
@@ -99,9 +99,10 @@ exports.getProductBySubID = asyncHandler(async (req, res) => {
 
 })
 exports.getProductByBrand = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { id, angilal } = req.params;
   if (id) {
-    const findProduct = await Product.find({ brand: id }).populate("brand").populate("SubID");
+    console.log(angilal, "brand")
+    const findProduct = await Product.find({ brand: id, angilalId: angilal }).populate("brand").populate("SubID");
     if (findProduct) {
       return res.json({
         success: true,
@@ -111,7 +112,7 @@ exports.getProductByBrand = asyncHandler(async (req, res) => {
     }
   }
 
-  const findProduct = await Product.find().populate("brand").populate("SubID");
+  const findProduct = await Product.find({ angilalId: angilal }).populate("brand").populate("SubID");
   if (findProduct) {
     res.json({
       success: true,
@@ -123,8 +124,9 @@ exports.getProductByBrand = asyncHandler(async (req, res) => {
 })
 
 exports.getProductByMinMax = asyncHandler(async (req, res) => {
-  const { min, max } = req.body
-  const findProduct = await Product.find({ price: { $gte: min, $lte: max } }).populate("brand").populate("SubID");
+  const { min, max, angilal } = req.body
+  console.log(angilal)
+  const findProduct = await Product.find({ angilalId: angilal, price: { $gte: min, $lte: max } }).populate("brand").populate("SubID");
   if (findProduct) {
     return res.json({
       success: true,
