@@ -8,7 +8,7 @@ const {
   deleteBrand,
 } = require("../../controller/admin/brand");
 
-router.route("/brand").get(protect, getBrands);
+router.route("/brand").get(getBrands);
 router.route("/brand/image").post(protect, createBrand);
 
 router
