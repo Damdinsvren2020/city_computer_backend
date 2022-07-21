@@ -147,8 +147,10 @@ exports.saveRegister = async (req, res) => {
 exports.updateUser = asyncHandler(async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { username, email, password } = req.body;
+    const { username, email, role, password } = req.body;
     const users = await User.findByIdAndUpdate(id);
+    console.log(req.params, req.body);
+    console.log(users);
     if (username) {
       users.username = username;
     }
@@ -162,6 +164,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
       users.role = role;
     }
     const saveuser = await users.save();
+    // console.log(saveuser);
     if (saveuser) {
       res.json({
         success: true,
@@ -177,7 +180,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 exports.deleteUsers = async (req, res, next) => {
   try {
     const users = await User.findByIdAndDelete(req.params.id);
-
+    console.log("delete", req.params.id);
     if (!users) {
       throw new MyError(req.params.id + " ID-тэй хэрэглэгч байхгүйээээ.", 400);
     }

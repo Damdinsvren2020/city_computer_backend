@@ -18,9 +18,10 @@ router.route("/register").post(register);
 router.route("/login").post(login);
 router.route("/saveregister").post(saveRegister);
 
-router.route("/users").get(getUsers).delete(deleteUsers);
+router.route("/users").get(getUsers);
+router.route("/usersdelete/:id").delete(deleteUsers);
 
-router.route("/users").put(updateUser);
+router.route("/usersEdit/:id").put(updateUser);
 router.route("/customer/wishList").post(addProduct).delete(removeProduct);
 
 module.exports = router;
