@@ -6,6 +6,7 @@ const {
   getUsers,
   saveRegister,
   updateUser,
+  deleteUsers,
 } = require("../../controller/User");
 
 const { addProduct, removeProduct } = require("../../controller/user/wishList");
@@ -17,7 +18,7 @@ router.route("/register").post(register);
 router.route("/login").post(login);
 router.route("/saveregister").post(saveRegister);
 
-router.route("/users").get(getUsers);
+router.route("/users").get(getUsers).delete(deleteUsers);
 
 router.route("/users").put(updateUser);
 router.route("/customer/wishList").post(addProduct).delete(removeProduct);
