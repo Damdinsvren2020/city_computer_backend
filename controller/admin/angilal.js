@@ -34,7 +34,8 @@ exports.verifyAngilal = asyncHandler(async (req, res) => {
   if (findAngilal) {
     res.json({
       success: true,
-      id: findAngilal._id
+      id: findAngilal._id,
+      name: findAngilal.name
     })
   }
 })

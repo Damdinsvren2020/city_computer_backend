@@ -125,8 +125,8 @@ exports.getProductByBrand = asyncHandler(async (req, res) => {
 
 exports.getProductByMinMax = asyncHandler(async (req, res) => {
   const { min, max, angilal } = req.body
-  console.log(angilal)
-  const findProduct = await Product.find({ angilalId: angilal, price: { $gte: min, $lte: max } }).populate("brand").populate("SubID");
+  console.log(angilal, "is here")
+  const findProduct = await Product.find({ $and: [{ angilalId: angilal }, { price: { $gte: min, $lte: max } }] }).populate("brand").populate("SubID");
   if (findProduct) {
     return res.json({
       success: true,
