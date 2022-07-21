@@ -16,6 +16,7 @@ const {
   getProductByMinMax,
   getProductByAngilal,
   sameProducts,
+  singleProductName,
 } = require("../../controller/admin/product");
 const router = express.Router();
 
@@ -34,6 +35,7 @@ router.route("/productSub/:id").get(protect, getSingleSub);
 router.route("/productAngilal/:id").post(getProductById);
 
 router.route("/productsOfSame/:id").get(sameProducts)
+router.route("/singleProduct/:name").get(singleProductName)
 
 
 router.route("/productSubAngilal/:id/:angilal").post(getProductBySubID);

@@ -246,6 +246,23 @@ exports.createProduct = async (req, res, next) => {
   }
 };
 
+
+exports.singleProductName = asyncHandler(async (req, res) => {
+  try {
+    const { name } = req.params;
+    const findSingle = await Product.findOne({ name: name })
+      .populate("brand")
+    if (findSingle) {
+      res.json({
+        success: true,
+        result: findSingle,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+})
+
 exports.editProduct = async (req, res) => {
   try {
     const { id } = req.params;
