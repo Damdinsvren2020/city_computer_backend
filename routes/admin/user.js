@@ -7,7 +7,10 @@ const {
   saveRegister,
   updateUser,
   deleteUsers,
+  auth,
 } = require("../../controller/User");
+
+const { protect } = require("../../middreware/protect");
 
 const { addProduct, removeProduct } = require("../../controller/user/wishList");
 
@@ -23,5 +26,7 @@ router.route("/usersdelete/:id").delete(deleteUsers);
 
 router.route("/usersEdit/:id").put(updateUser);
 router.route("/customer/wishList").post(addProduct).delete(removeProduct);
+
+router.route("/authorize").get(auth);
 
 module.exports = router;

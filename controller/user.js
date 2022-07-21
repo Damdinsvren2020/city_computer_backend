@@ -75,11 +75,11 @@ exports.login = asyncHandler(async (req, res, next) => {
   const ok = await user.checkPassword(password);
 
   const token = jwt.sign(
-    { id: user._id, role: user.role },
-    process.env.JWT_SECRET,
     {
-      expiresIn: "2h",
-    }
+      id: user._id,
+      role: user.role,
+    },
+    "dijsdhfshfjhsbdjfhbsdjhbfjsdhbjhb"
   );
 
   if (!ok) {
@@ -88,7 +88,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    token: token,
+    token,
     user: user,
   });
 });
@@ -193,3 +193,31 @@ exports.deleteUsers = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.auth = asyncHandler(async (req, res) => {
+  if (!req.headers.authorization) {
+    throw new MyError(
+      "Энэ үйлдлийг хийхэд таны эрх хүрэхгүй байна. Та эхлээд логин хийнэ үү",
+      401
+    );
+  }
+  const token = req.headers.authorization.split(" ")[1];
+
+  if (!token) {
+    throw new MyError("Токен байхгүй байна.", 400);
+  }
+  // const tokenObj = jwt.verify(token, process.env.JWT_SECRET);
+  try {
+    const verify = jwt.verify(token, "dijsdhfshfjhsbdjfhbsdjhbfjsdhbjhb");
+    const findUser = await User.findById(verify.id).select("-password");
+    if (findUser) {
+      res.json({
+        success: true,
+        user: findUser,
+        role: findUser.role,
+      });
+    }
+  } catch (err) {
+    console.error(err.message, "wtf");
+  }
+});
