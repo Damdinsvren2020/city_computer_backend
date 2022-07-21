@@ -21,17 +21,16 @@ function compareAsync(param1, param2) {
 
 exports.register = asyncHandler(async (req, res, next) => {
   const user = await User.create(req.body);
-  // console.log("daaaaa", req.body);
   const token = await user.getJsonWebToken();
   if (token) {
     const newWishList = new Wishlist({
-      user: user._id
-    })
-    const saved = await newWishList.save()
+      user: user._id,
+    });
+    const saved = await newWishList.save();
     if (saved) {
       const finduserAndsetWish = await User.findByIdAndUpdate(user._id, {
-        wishlist: saved._id
-      })
+        wishlist: saved._id,
+      });
     }
   }
   res.json({
@@ -142,5 +141,52 @@ exports.saveRegister = async (req, res) => {
         message: "Нууц үг зөрж байна",
       });
     }
+  }
+};
+
+exports.updateUser = asyncHandler(async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { username, email, password } = req.body;
+    const users = await User.findByIdAndUpdate(id);
+    if (username) {
+      users.username = username;
+    }
+    if (email) {
+      users.email = email;
+    }
+    if (password) {
+      users.password = password;
+    }
+    if (role) {
+      users.role = role;
+    }
+    const saveuser = await users.save();
+    if (saveuser) {
+      res.json({
+        success: true,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+    });
+  }
+});
+exports.deleteUsers = async (req, res, next) => {
+  try {
+    const users = await User.findByIdAndDelete(req.params.id);
+
+    if (!users) {
+      throw new MyError(req.params.id + " ID-тэй хэрэглэгч байхгүйээээ.", 400);
+    }
+
+    res.status(200).json({
+      success: true,
+      data: users,
+    });
+  } catch (err) {
+    next(err);
   }
 };

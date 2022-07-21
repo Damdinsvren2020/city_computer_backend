@@ -5,6 +5,7 @@ const {
   login,
   getUsers,
   saveRegister,
+  updateUser,
 } = require("../../controller/User");
 
 const { addProduct, removeProduct } = require("../../controller/user/wishList");
@@ -17,7 +18,8 @@ router.route("/login").post(login);
 router.route("/saveregister").post(saveRegister);
 
 router.route("/users").get(getUsers);
-router.route("/customer/wishList").post(addProduct).delete(removeProduct);
 
+router.route("/users").put(updateUser);
+router.route("/customer/wishList").post(addProduct).delete(removeProduct);
 
 module.exports = router;
