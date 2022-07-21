@@ -26,6 +26,17 @@ exports.getProducts = asyncHandler(async (req, res) => {
   //   }
 });
 
+exports.sameProducts = asyncHandler(async (req, res) => {
+  const { id } = req.params
+  const findSame = await Product.find({ SubID: id }).populate("brand").populate("SubID")
+  if (findSame) {
+    res.json({
+      success: true,
+      result: findSame
+    })
+  }
+})
+
 exports.getProductByAngilal = asyncHandler(async (req, res) => {
   const { id } = req.params
   console.log(id)
@@ -148,7 +159,7 @@ exports.getSingleSub = async (req, res) => {
   }
 };
 
-exports.singleProduct = async (req, res) => {
+exports.singleProduct = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
     const findSingle = await Product.findById(id)
@@ -163,7 +174,7 @@ exports.singleProduct = async (req, res) => {
   } catch (error) {
     console.log(error);
   }
-};
+})
 
 exports.createProduct = async (req, res, next) => {
   try {
