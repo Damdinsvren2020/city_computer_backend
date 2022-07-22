@@ -148,7 +148,9 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
   try {
     const { id } = req.params;
     const { username, email, role, password } = req.body;
-    const users = await User.findByIdAndUpdate(id);
+    console.log("user up", req.body);
+    console.log(id);
+    const users = await User.findById(id);
     console.log(req.params, req.body);
     console.log(users);
     if (username) {
@@ -166,6 +168,49 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
     const saveuser = await users.save();
     // console.log(saveuser);
     if (saveuser) {
+      res.json({
+        success: true,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+    });
+  }
+});
+
+exports.updateUserFront = asyncHandler(async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { username, email } = req.body;
+    console.log("user up", req.body);
+    const users = await User.findByIdAndUpdate(id, {
+      username: username,
+      email: email,
+    });
+    if (users) {
+      res.json({
+        success: true,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+    });
+  }
+});
+
+exports.updateUserFrontPassword = asyncHandler(async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { password } = req.body;
+
+    const users = await User.findByIdAndUpdate(id, {
+      password: password,
+    });
+    if (users) {
       res.json({
         success: true,
       });
