@@ -65,14 +65,16 @@ exports.login = asyncHandler(async (req, res, next) => {
   if (!email || !password) {
     throw new MyError("Имэйл болон нууц үгээ дамжуулна уу", 400);
   }
+  console.log(req.body);
 
   const user = await User.findOne({ email }).select("+password");
+  console.log(user);
 
   if (!user) {
     throw new MyError("Имэйл болон нууц үгээ зөв оруулна уу", 401);
   }
 
-  const ok = await user.checkPassword(password);
+  const ok = await bcrypt.compare(password, user.password);
 
   const token = jwt.sign(
     {
@@ -148,11 +150,9 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
   try {
     const { id } = req.params;
     const { username, email, role, password } = req.body;
-    console.log("user up", req.body);
-    console.log(id);
+
     const users = await User.findById(id);
-    console.log(req.params, req.body);
-    console.log(users);
+
     if (username) {
       users.username = username;
     }
@@ -184,7 +184,7 @@ exports.updateUserFront = asyncHandler(async (req, res, next) => {
   try {
     const { id } = req.params;
     const { username, email } = req.body;
-    console.log("user up", req.body);
+
     const users = await User.findByIdAndUpdate(id, {
       username: username,
       email: email,
@@ -207,8 +207,11 @@ exports.updateUserFrontPassword = asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     const { password } = req.body;
 
+    const salt = await bcrypt.genSalt(10);
+    const hashedpassword = await bcrypt.hash(password, salt);
+
     const users = await User.findByIdAndUpdate(id, {
-      password: password,
+      password: hashedpassword,
     });
     if (users) {
       res.json({
