@@ -44,15 +44,34 @@ exports.addProduct = asyncHandler(async (req, res) => {
 exports.removeProduct = asyncHandler(async (req, res) => {
     const { userID, productID } = req.body
     const findUserWishList = await User.findById(userID)
+    console.log(userID, productID)
     if (findUserWishList.wishlist) {
-        const findWishlist = await Wishlist.findByIdAndUpdate(findUserWishList.wishlist, {
-            $pull: { products: productID }
+        // const findWishlist = await Wishlist.findByIdAndUpdate(findUserWishList.wishlist, {
+        //     $pop: { products: -1 }
+        // })
+        // if (findWishlist) {
+        //     res.json({
+        //         success: true
+        //     })
+        // }
+
+        Wishlist.find({ user: userID }).forEach(function (doc) {
+            Wishlist.updateOne(
+                { "_id": doc._id },
+                { "$set": { "products": [doc.products] } }
+            );
         })
-        if (findWishlist) {
-            res.json({
-                success: true
-            })
-        }
+
+        // const findWishlist = await Wishlist.findById(findUserWishList.wishlist)
+        // const saveArray = findWishlist.products
+        // const obj = saveArray.reduce((acc, cur, index) => {
+        //     if (acc[cur._id] === productID) {
+        //         acc[cur._id] = { index: cur }
+        //     }
+        //     return acc;
+        // }, {});
+        // const output = Object.values(obj).sort((a, b) => a.index - b.index).map(({ index: val }) => val)
+        // console.log(output)
     } else {
         return res.json({
             success: false,
@@ -63,19 +82,16 @@ exports.removeProduct = asyncHandler(async (req, res) => {
 
 exports.getUserWishList = asyncHandler(async (req, res) => {
     const { id } = req.params
+    console.log(id)
     const findUserWishList = await User.findById(id)
     if (findUserWishList.wishlist) {
-        const wishlistProducts = await Wishlist.findById(findUserWishList.wishlist).populate("products")
+        const wishlistProducts = await Wishlist.findById(findUserWishList.wishlist).populate("products").populate({ path: 'products', populate: { path: 'brand' } })
+
         if (wishlistProducts) {
-            let totalPrice = 0
-            let totalLength = 0
-            await wishlistProducts.forEach(async (element) => {
-                totalPrice = totalPrice + element.price
-            });
+            res.json({
+                success: true,
+                result: wishlistProducts
+            })
         }
-
-    }
-    if (!findUserWishList.wishlist) {
-
     }
 })

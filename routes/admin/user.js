@@ -14,7 +14,7 @@ const {
 
 const { protect } = require("../../middreware/protect");
 
-const { addProduct, removeProduct } = require("../../controller/user/wishList");
+const { addProduct, removeProduct, getUserWishList } = require("../../controller/user/wishList");
 
 const router = express.Router();
 
@@ -30,7 +30,9 @@ router.route("/usersEdit/:id").put(updateUser);
 router.route("/editUserFront/:id").put(updateUserFront);
 router.route("/editUserFrontPassword/:id").put(updateUserFrontPassword);
 
-router.route("/customer/wishList").post(addProduct).delete(removeProduct);
+router.route("/customer/wishList").post(addProduct);
+router.route("/customer/wishList/remove").post(removeProduct)
+router.route("/userWishlist/:id").get(getUserWishList)
 
 router.route("/authorize").get(auth);
 
